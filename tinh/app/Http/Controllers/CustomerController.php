@@ -9,12 +9,16 @@ use Illuminate\Support\Facades\Session;
 
 class CustomerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        if(isset($request->keyword)){
+            $customers = Customer::where('name', 'LIKE', '%' . $request->keyword . '%')->paginate(5);
+        } else {
+            $customers = Customer::paginate(5);
+
+        }
         $cities = City::all();
-        $customers = Customer::all();
-        return view('customers.list', compact('customers','cities'));
-        
+        return view('customers.list', compact('customers', 'cities'));
     }
     public function create()
     {
@@ -58,10 +62,20 @@ class CustomerController extends Controller
     //tiêm vào dependency injection để không cần khởi tạo lại lớp đó nữa
     public function filterByCity(Request $request)
     {
-        
-        $cities = City::all();
-        $customers = Customer::where('city_id', '=', $request->city_id)->get();
-        return view('customers.list', compact('customers','cities'));
 
+        $cities = City::all();
+        $customers = Customer::where('city_id', '=', $request->city_id)->paginate(5);
+        return view('customers.list', compact('customers', 'cities'));
+    }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+        if (!$keyword) {
+            return redirect()->route('customers.index');
+        }
+        $customers = Customer::where('name', 'LIKE', '%' . $keyword . '%')->paginate(5);
+        $cities = City::all();
+        return view('customers.list', compact('customers', 'cities'));
     }
 }

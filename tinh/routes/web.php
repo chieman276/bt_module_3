@@ -34,6 +34,7 @@ Route::group(['prefix' => 'customers'], function () {
     Route::post('/{id}/update', [CustomerController::class, 'update'])->name('customers.update');
     Route::get('/{id}/delete', [CustomerController::class, 'destroy'])->name('customers.destroy');
     Route::get('/filterByCity', [CustomerController::class, 'filterByCity'])->name('customers.filterByCity');
+    Route::get('/search', [CustomerController::class, 'search'])->name('customers.search');
 
 });
 
